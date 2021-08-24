@@ -1,0 +1,38 @@
+#Roman Makeev, 2021 Clear code
+name: ClearCode
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - run: echo "==== Starting Job ===="
+    - run: echo "==== Triggered by a ${{ github.event_name }}  ===="
+    - run: echo "==== OS version ${{ runner.os }} ===="
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi  
+
+  deploy:
+
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "==== Starting Deploying ===="
+      - uses: actions/checkout@v2
+      - uses: google-github-actions/deploy-appengine@main
+        with:
+          credentials: ${{ secrets.gcp_credentials }}
+  
